@@ -22,7 +22,7 @@ jobs:
         with:
           repository: webosbrew/ares-cli-rs
           latest: true
-          fileName: ares-package_*.deb
+          fileName: ares-package_*_amd64.deb
           out-file-path: temp
 
       - name: Download Homebrew Toolbox
@@ -30,13 +30,13 @@ jobs:
         with:
           repository: webosbrew/dev-toolbox-cli
           latest: true
-          fileName: webosbrew-toolbox-*.deb
+          fileName: webosbrew-toolbox-*_amd64.deb
           out-file-path: temp
 
       - name: Install packaging tools
         run: |
           sudo apt-get -yq update
-          sudo apt-get install -y ./temp/*.deb
+          sudo apt-get install -y ./temp/*_amd64.deb
 
       - name: Build webOS Release package
         uses: ./.github/actions/build-webos
