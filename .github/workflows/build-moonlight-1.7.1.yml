@@ -1,0 +1,54 @@
+name: Build Moonlight webOS v1.7.1
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Moonlight/Aurora v1.7.1
+        uses: actions/checkout@v4
+        with:
+          repository: GuiDev1994/aurora-tv
+          ref: v1.7.1
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Download ares-cli-rs
+        uses: robinraju/release-downloader@v1.12
+        with:
+          repository: webosbrew/ares-cli-rs
+          latest: true
+          fileName: ares-package_*.deb
+          out-file-path: temp
+
+      - name: Download Homebrew Toolbox
+        uses: robinraju/release-downloader@v1.12
+        with:
+          repository: webosbrew/dev-toolbox-cli
+          latest: true
+          fileName: webosbrew-toolbox-*.deb
+          out-file-path: temp
+
+      - name: Install packaging tools
+        run: |
+          sudo apt-get -yq update
+          sudo apt-get install -y ./temp/*.deb
+
+      - name: Build webOS Release package
+        uses: ./.github/actions/build-webos
+        with:
+          build-type: Release
+
+      - name: Show output
+        run: ls -lah dist && file dist/*.ipk
+
+      - name: Upload IPK
+        uses: actions/upload-artifact@v4
+        with:
+          name: moonlight-webos-v1.7.1-ipk
+          path: dist/*.ipk
+          if-no-files-found: error
