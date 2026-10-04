@@ -17,6 +17,11 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
+      - name: Apply v1.7.1 webOS compatibility fix
+        run: |
+          sed -i '/requestedChromaSubsampling/d' src/app/stream/session.c
+          git diff -- src/app/stream/session.c
+
       - name: Download ares-cli-rs
         uses: robinraju/release-downloader@v1.12
         with:
